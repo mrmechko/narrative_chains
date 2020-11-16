@@ -2,7 +2,7 @@
 
 import pandas as pd
 import neuralcoref
-import spacy
+import spacy, json
 import random, math
 from collections import namedtuple, Counter, defaultdict as ddict
 import tqdm
@@ -91,7 +91,7 @@ def process_corpus(rocstories, sample=None, replacement=0.2):
 
     return dataset, ProbabilityTable(story_counter)
 
-def process_story(parsedstory, heuristic=2, verbose=True, story_counter=ddict(list)):
+def process_story(parsedstory, heuristic=2, verbose=False, story_counter=ddict(list)):
     prot = protagonist(parsedstory, heuristic=2)
     parse_id, dep_pairs = extract_dependency_pairs(parsedstory)
 
@@ -169,27 +169,38 @@ def protagonist_heuristic_two(story):
 class ProbabilityTable:
     def __init__(self, counter):
         self.counter = counter
+        self.cache = {}
+
+    def write(self, fname="table.json"):
+        with open(fname, 'w') as f:
+            json.dump(self.counter, f, indent=2)
 
     def bigram(self, verb, dependency, verb2, dependency2):
         """Find all the stories where story contains verb,dependency and verb2,dependency2
         AND they refer to the same entity
         """
-        ctr = 0
-        for story in self.counter:
-            for entity in self.counter[story]:
-                v = self.counter[story][entity]
-                if (verb, dependency) in v and (verb2, dependency2) in v:
-                    ctr +=1
-        return ctr
+        query = (verb, dependency, verb2, dependency2)
+        if query not in self.cache:
+            ctr = 0
+            for story in self.counter:
+                for entity in self.counter[story]:
+                    v = self.counter[story][entity]
+                    if (verb, dependency) in v and (verb2, dependency2) in v:
+                        ctr +=1
+            self.cache[query] = ctr
+        return self.cache[query]
 
     def unigram(self, verb, dependency):
         """Number of stories containing verb/dependency"""
-        ctr = 0
-        for story in self.counter:
-            for entity in self.counter[story]:
-                if (verb, dependency) in self.counter[story][entity]:
-                    ctr += 1
-        return ctr
+        query = (verb, dependency)
+        if query not in self.cache:
+            ctr = 0
+            for story in self.counter:
+                for entity in self.counter[story]:
+                    if (verb, dependency) in self.counter[story][entity]:
+                        ctr += 1
+            self.cache[query] = ctr
+        return self.cache[query]
 
     def pmi(self, verb, dependency, verb2, dependency2):
         n = len(self.counter) + PLUS_ONE_SMOOTHING

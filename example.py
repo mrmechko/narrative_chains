@@ -16,9 +16,13 @@ def story_answer(story):
     #obviously you can't use this information until you've chosen your answer!
     return story.InputStoryid, story.AnswerRightEnding
 
-# Load training data
-data, table = chains.process_corpus("train.csv", 100)
-print(table.pmi("move", "nsubj", "move", "nsubj"))
+# Load training data and build the model
+#data, table = chains.process_corpus("train.csv", 100)
+#print(table.pmi("move", "nsubj", "move", "nsubj"))
+
+# load the pre-built model
+with open("all.json") as fp:
+    table = chains.ProbabilityTable(json.load(fp))
 
 # load testing data
 test = chains.load_data("val.csv")
