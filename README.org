@@ -57,3 +57,11 @@ CLOSED: [2020-11-04 Wed 14:55]
 data, probability = process_corpus("train.csv, sample=100)
 print(probability.pmi("move", "dobj", "move", "dobj"))
 #+END_src
+
+* Load Pretrained model instead:
+1. Download model from https://github.com/mrmechko/narrative_chains/releases/download/0.0.1/all.json and save it as ~all.json~
+2. use the following snippet
+   #+BEGIN_SRC python
+with open("all.json") as fp:
+    table = chains.ProbabilityTable(json.load(fp))
+   #+END_SRC
