@@ -20,7 +20,7 @@ def story_answer(story):
 with open("all.json") as fp:
     table = chains.ProbabilityTable(json.load(fp))
 
-# All print statements have been commented out, they only served as testing utility during development
+# Perform the cloze test
 def cloze_test(rocstories):
     test = chains.load_data(rocstories)
     answers = []
@@ -34,29 +34,13 @@ def cloze_test(rocstories):
         one_deps = chains.extract_dependency_pairs(one)
         two_deps = chains.extract_dependency_pairs(two)
 
-        # pprint(one[2:])
-        # print("------------")
         for key in one_deps[1]:
-            # pprint(one_deps[1][key])
-            # print("Every combination for entity ", key, " is:" )
             for element in itertools.combinations(one_deps[1][key], 2):
-                # pprint(element)
                 one_pmi += table.pmi(element[0][0], element[0][1], element[1][0], element[1][1])
-            
-        # print("PMI:", one_pmi)
-        # print("------------")
 
-        # pprint(two[2:])
-        # print("------------")
         for key in two_deps[1]:
-            # pprint(two_deps[1][key])
-            # print("Every combination for entity ", key, " is:" )
             for element in itertools.combinations(two_deps[1][key], 2):
-                # pprint(element)
                 two_pmi += table.pmi(element[0][0], element[0][1], element[1][0], element[1][1])
-            
-        # print("PMI:", two_pmi)
-        # print("------------")
 
         if (one_pmi > two_pmi):
             answers.append((one[0], 1, right_answer[1]))
