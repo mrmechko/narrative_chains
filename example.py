@@ -1,6 +1,6 @@
 import chains
 from pprint import pprint
-
+import json as json
 
 def parse_test_instance(story):
     """Returns TWO ParsedStory instances representing option 1 and 2"""
