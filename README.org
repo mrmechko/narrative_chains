@@ -40,7 +40,7 @@ CLOSED: [2020-11-04 Wed 14:55]
 - P(e(w,d)) => Probability of an event-dep
   + Specifically, verb is /w/ and the dependency is /d/
   + $P(E1) = \frac{Count(E1)}{Count(stories)}$
-  + $P(E1,E2) = \frac{Count(E1 & E2)}{Count(stories)}$
+  + $P(E1,E2) = \frac{Count(E1 \& E2)}{Count(stories)}$
 - So we are calling /e(w,d)=E1/
 - Equation 1:
   $pmi(E1,E2)=log\frac{P(E1,E2)}{P(E1)P(E2)}$
